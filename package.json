@@ -1,0 +1,21 @@
+{
+  "name": "json-dto",
+  "version": "1.0.0-snapshot",
+  "description": "",
+  "source": "./src/index.js",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "microbundle",
+    "dev": "microbundle watch --target=node",
+    "test": "microbundle && jest"
+  },
+  "author": "Arseni Buinitski <arseni@aterise.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "microbundle": "^0.12.0-next.6",
+    "prettier": "^1.18.2",
+    "source-map-support": "^0.5.13"
+  }
+}
