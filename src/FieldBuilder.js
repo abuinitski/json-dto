@@ -17,24 +17,26 @@ export default function FieldBuilder(firstVerbName) {
     },
   ]
 
-  return new Proxy(() => {}, {
+  const proxyTarget = () => {}
+
+  return new Proxy(proxyTarget, {
     apply(target, thisArg, argArray) {
       const [lastVerbData] = builderVerbData.splice(-1)
       const [nextVerbParams] = argArray
 
       applyVerb(lastVerbData.verbName, nextVerbParams)
 
-      return thisArg
+      return new Proxy(proxyTarget, this)
     },
 
-    get(target, propertyName, receiver) {
+    get(target, propertyName) {
       if (propertyName === '_materialize') {
         return fieldName => materializeFieldTransformer(fieldName, builderVerbData)
       }
 
       applyVerb(propertyName, null)
 
-      return receiver
+      return new Proxy(proxyTarget, this)
     },
   })
 

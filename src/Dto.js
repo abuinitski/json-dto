@@ -53,7 +53,7 @@ function mapCollection(input, objectHandler, ErrorType) {
 
   for (const inputItem of input) {
     const objectOutput = {}
-    objectHandler.handleObject(inputItem, objectOutput, errors, `[${outputIndex}].`)
+    objectHandler.handleObject(inputItem, objectOutput, errors, `[${outputIndex}]`)
     output[outputIndex++] = objectOutput
   }
 

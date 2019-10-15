@@ -1,5 +1,5 @@
 export default class ObjectHandler {
-  static materialize(dtoDescription, baseFieldPrefix = '') {
+  static materialize(dtoDescription) {
     const readHandlers = []
     const writeHandlers = []
 
@@ -7,7 +7,7 @@ export default class ObjectHandler {
       const materialize = fieldBuilder._materialize
 
       if (typeof materialize !== 'function') {
-        throw new Error(`Dto: configuration for field "${baseFieldPrefix}${fieldName}" is not a field builder`)
+        throw new Error(`Dto: configuration for field "${fieldName}" is not a field builder`)
       }
 
       const { read, write } = materialize(fieldName)
@@ -16,24 +16,21 @@ export default class ObjectHandler {
     }
 
     return {
-      readHandler: new ObjectHandler(readHandlers, baseFieldPrefix),
-      writeHandler: new ObjectHandler(writeHandlers, baseFieldPrefix),
+      readHandler: new ObjectHandler(readHandlers),
+      writeHandler: new ObjectHandler(writeHandlers),
     }
   }
 
   #handlers
-  #baseFieldPrefix
 
-  constructor(handlers, baseFieldPrefix) {
+  constructor(handlers) {
     this.#handlers = handlers
-    this.#baseFieldPrefix = baseFieldPrefix
   }
 
   handleObject(input, output, errors, fieldPrefix = '') {
-    const fullPrefix = `${this.#baseFieldPrefix}${fieldPrefix}`
-
     for (const handler of this.#handlers) {
-      handler(input, output, errors, fullPrefix)
+      handler(input, output, errors, fieldPrefix)
     }
+    return output
   }
 }

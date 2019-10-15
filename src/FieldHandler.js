@@ -16,14 +16,19 @@ export default function FieldHandler(fieldName, stageHandlers) {
   }
 
   return (input, output, errors, fieldPrefix) => {
+    const fieldPath = (fieldPrefix && `${fieldPrefix}.${fieldName}`) || fieldName
+
     const handlerExtra = {
+      fieldName,
+
+      fieldPath,
+
       saveField: fieldValue => {
         output[fieldName] = fieldValue
         return output
       },
-      saveFieldError: error => {
-        const fieldPath = `${fieldPrefix}${fieldName}`
 
+      saveFieldError: error => {
         let cookedError = error
         if (typeof cookedError.t === 'string') {
           cookedError = {
@@ -36,7 +41,14 @@ export default function FieldHandler(fieldName, stageHandlers) {
         if (!errors[fieldPath]) {
           errors[fieldPath] = []
         }
+
         errors[fieldPath].push(cookedError)
+      },
+
+      saveErrors: otherErrors => {
+        for (const [otherFieldName, otherFieldErrors] of Object.entries(otherErrors)) {
+          errors[otherFieldName] = [...(errors[otherFieldName] || []), ...otherFieldErrors]
+        }
       },
     }
 

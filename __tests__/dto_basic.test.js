@@ -2,7 +2,7 @@ const { Dto } = require('../dest/index')
 
 describe('Simple DTO object', () => {
   const dto = new Dto({
-    id: Dto.integer,
+    id: Dto.integer({ greaterThan: 0 }),
     age: Dto.optional.positive.integer,
     name: Dto.string,
   })
