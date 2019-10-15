@@ -3,12 +3,12 @@
   "version": "1.0.0-snapshot",
   "description": "",
   "source": "./src/index.js",
-  "main": "index.js",
+  "main": "./dest/index.js",
   "type": "module",
   "scripts": {
     "build": "microbundle",
     "dev": "microbundle watch --target=node",
-    "test": "microbundle && jest"
+    "test": "microbundle && jest --globalSetup './__test_support__/setup.js'"
   },
   "author": "Arseni Buinitski <arseni@aterise.com>",
   "license": "MIT",

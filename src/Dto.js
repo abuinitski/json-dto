@@ -1,64 +1,65 @@
+import { DtoReadError, DtoWriteError } from './errors'
+import ObjectHandler from './ObjectHandler'
+
 export default class Dto {
-  #readHandlers = []
-  #writeHandlers = []
+  #readHandler
+  #writeHandler
 
   constructor(fields) {
-    for (const [fieldName, fieldBuilder] of Object.entries(fields)) {
-      const materialize = fieldBuilder._materialize
-
-      if (typeof materialize !== 'function') {
-        throw new Error(`Dto: configuration for field "${fieldName}" is not a field builder`)
-      }
-
-      const { read, write } = materialize(fieldName)
-      this.#readHandlers.push(read)
-      this.#writeHandlers.push(write)
-    }
+    const { readHandler, writeHandler } = ObjectHandler.materialize(fields)
+    this.#readHandler = readHandler
+    this.#writeHandler = writeHandler
   }
 
   read(input) {
-    const output = {}
-    for (const handler of this.#readHandlers) {
-      handler(input, output)
-    }
-    return output
+    return mapObject(input, this.#readHandler, DtoReadError)
   }
 
   write(input) {
-    const output = {}
-    for (const handler of this.#writeHandlers) {
-      handler(input, output)
-    }
-    return output
+    return mapObject(input, this.#writeHandler, DtoWriteError)
   }
 
-  readList(input) {
-    if (!input || !input[Symbol.iterator]) {
-      throw new Error('readList: input is not iterable')
-    }
-
-    const output = (input.length && new Array(input.length)) || []
-    let outputIndex = 0
-
-    for (const inputItem of input) {
-      output[outputIndex++] = this.read(inputItem)
-    }
-
-    return output
+  readCollection(input) {
+    return mapCollection(input, this.#readHandler, DtoReadError)
   }
 
-  writeList(input) {
-    if (!input || !input[Symbol.iterator]) {
-      throw new Error('writeList: input is not iterable')
-    }
-
-    const output = (input.length && new Array(input.length)) || []
-    let outputIndex = 0
-
-    for (const inputItem of input) {
-      output[outputIndex++] = this.write(inputItem)
-    }
-
-    return output
+  writeCollection(input) {
+    return mapCollection(input, this.#writeHandler, DtoWriteError)
   }
+}
+
+function mapObject(input, objectHandler, ErrorType) {
+  const output = {}
+  const errors = {}
+
+  objectHandler.handleObject(input, output, errors)
+
+  if (Object.keys(errors).length) {
+    throw new ErrorType(errors)
+  }
+
+  return output
+}
+
+function mapCollection(input, objectHandler, ErrorType) {
+  if (!input || !input[Symbol.iterator]) {
+    throw new ErrorType({ '': [{ t: 'notAnArray' }] })
+  }
+
+  const output = (input.length && new Array(input.length)) || []
+  let outputIndex = 0
+
+  const errors = {}
+
+  for (const inputItem of input) {
+    const objectOutput = {}
+    objectHandler.handleObject(inputItem, objectOutput, errors, `[${outputIndex}].`)
+    output[outputIndex++] = objectOutput
+  }
+
+  if (Object.keys(errors).length) {
+    throw new ErrorType(errors)
+  }
+
+  return output
 }

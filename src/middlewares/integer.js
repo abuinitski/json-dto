@@ -43,12 +43,12 @@ function integerFactory(inputOptions) {
   ]
 
   if (allowZero === false) {
-    middlewares.push((input, next) => {
+    middlewares.push((input, next, { saveFieldError }) => {
       if (input === 0) {
-        return next(input)
+        saveFieldError({ t: 'integer.failedNonZero' })
       }
 
-      return next(input, { t: 'integer.failedNonZero' })
+      return next(input)
     })
   }
 
@@ -80,10 +80,10 @@ function integerFactory(inputOptions) {
 
   function addLimitCheck(limit, checker) {
     if (limit !== null && limit !== undefined) {
-      middlewares.push((input, next) => {
+      middlewares.push((input, next, { saveFieldError }) => {
         const error = checker(input)
         if (error) {
-          return next(input, error)
+          saveFieldError(error)
         }
         return next(input)
       })

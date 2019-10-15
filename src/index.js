@@ -1,6 +1,7 @@
 import DtoDsl from './DtoDsl'
 
 import VerbRegistry from './VerbRegistry'
+import { DtoReadError, DtoWriteError } from './errors'
 
 import optional from './middlewares/optional'
 import integer from './middlewares/integer'
@@ -12,4 +13,4 @@ VerbRegistry.registerMiddleware('integer', integer)
 VerbRegistry.registerMiddleware('string', string)
 VerbRegistry.registerMiddleware('nullable', nullable)
 
-module.exports = { Dto: DtoDsl }
+module.exports = { Dto: DtoDsl, DtoReadError, DtoWriteError }
