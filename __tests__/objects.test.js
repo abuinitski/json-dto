@@ -23,7 +23,7 @@ describe('DTO object field', () => {
     expect(output).toEqual({ item: { id: 1, name: 'bozo' } })
   })
 
-  test('reports an error when object is not an array', () => {
+  test('reports an error when object is not an object', () => {
     try {
       dto.read({ item: 'wolo' })
       fail()
