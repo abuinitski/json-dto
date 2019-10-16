@@ -1,12 +1,13 @@
 {
   "name": "json-dto",
-  "version": "1.0.0-snapshot",
+  "version": "1.0.0-snapshot.1",
   "description": "",
   "source": "./src/index.js",
   "main": "./dest/index.js",
   "type": "module",
   "scripts": {
     "build": "microbundle",
+    "prepublish": "microbundle",
     "dev": "microbundle watch --target=node",
     "test": "microbundle && jest --globalSetup './__test_support__/setup.js'"
   },
