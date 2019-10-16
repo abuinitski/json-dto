@@ -7,6 +7,7 @@ import FieldHandler from './FieldHandler'
 
 export default function materializeFieldTransformer(fieldName, verbs) {
   const middlewares = cookVerbsToMiddlewaresWithSugarsApplied(verbs)
+
   const { reads, writes } = explodeStagedHandlers(middlewares)
 
   const readHandlers = materializeStagedHandlers(reads, fieldName)
@@ -35,6 +36,7 @@ function materializeStagedHandlers(stagedHandlers, fieldName) {
   }
 
   const allStagedHandlers = [extractor, valuePresenceChecker, ...stagedHandlers, saver]
+
   return stableSort(allStagedHandlers, compareByStage).map(({ handler }) => handler)
 }
 
@@ -88,6 +90,8 @@ function cookVerbsToMiddlewaresWithSugarsApplied(verbs) {
       new Map()
     )
 
+  checkConflictingTypeDeclarations(Array.from(middlewares.values()))
+
   verbs
     .filter(({ sugars }) => Boolean(sugars))
     .forEach(({ sugars, verbParams: sugarParams }) => {
@@ -101,6 +105,31 @@ function cookVerbsToMiddlewaresWithSugarsApplied(verbs) {
     }, new Map())
 
   return middlewares.values()
+}
+
+function checkConflictingTypeDeclarations(middlewares) {
+  middlewares.reduce(
+    (status, { middleware }) => {
+      let { hasReadMap, hasWriteMap } = status
+
+      if (middleware.read && middleware.read.stage === ProcessingStages.Map) {
+        if (hasReadMap) {
+          throw new Error('Invalid DTO description: conflicting type declarations')
+        }
+        hasReadMap = true
+      }
+
+      if (middleware.write && middleware.write.stage === ProcessingStages.Map) {
+        if (hasWriteMap) {
+          throw new Error('Invalid DTO description: conflicting type declarations')
+        }
+        hasWriteMap = true
+      }
+
+      return { hasReadMap, hasWriteMap }
+    },
+    { hasReadMap: false, hasWriteMap: false }
+  )
 }
 
 function disambiguateSugarVerbs(ambiguousSugars, middlewares) {

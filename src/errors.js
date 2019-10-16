@@ -33,3 +33,27 @@ export class DtoWriteError extends Error {
     return this.#fieldErrors
   }
 }
+
+export class DtoFieldError extends Error {
+  #code
+  #extra
+
+  constructor(code, extra) {
+    super()
+
+    this.#code = code
+    this.#extra = extra
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, DtoWriteError)
+    }
+  }
+
+  get code() {
+    return this.#code
+  }
+
+  get extra() {
+    return this.#extra
+  }
+}

@@ -1,7 +1,8 @@
 import DtoDsl from './DtoDsl'
 
 import VerbRegistry from './VerbRegistry'
-import { DtoReadError, DtoWriteError } from './errors'
+import { DtoReadError, DtoWriteError, DtoFieldError } from './errors'
+import ProcessingStages from './ProcessingStages'
 
 import optional from './middlewares/optional'
 import integer from './middlewares/integer'
@@ -19,4 +20,4 @@ VerbRegistry.registerMiddleware('object', object)
 VerbRegistry.registerMiddleware('nullable', nullable)
 VerbRegistry.registerMiddleware('enum', enumMiddleware)
 
-module.exports = { Dto: DtoDsl, DtoReadError, DtoWriteError }
+module.exports = { Dto: DtoDsl, DtoProcessingStages: ProcessingStages, DtoReadError, DtoWriteError, DtoFieldError }
