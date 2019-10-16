@@ -6,10 +6,9 @@
   "main": "./dest/index.js",
   "type": "module",
   "scripts": {
-    "build": "microbundle",
-    "prepublish": "microbundle",
+    "prepare": "microbundle",
     "dev": "microbundle watch --target=node",
-    "test": "microbundle && jest --globalSetup './__test_support__/setup.js'"
+    "test": "jest --globalSetup './__test_support__/setup.js'"
   },
   "author": "Arseni Buinitski <arseni@aterise.com>",
   "license": "MIT",
