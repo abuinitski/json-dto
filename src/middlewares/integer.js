@@ -10,22 +10,30 @@ export default {
     stage: ProcessingStages.Map,
   },
   sugars: {
-    nonZero: options => ({
-      ...options,
-      allowZero: false,
-    }),
-    nonNegative: options => ({
-      ...options,
-      greaterThanOrEqualTo: Math.max((options && options.greaterThanOrEqualTo) || 0, 0),
-    }),
-    positive: options => ({
-      ...options,
-      greaterThan: Math.max((options && options.greaterThan) || 0, 0),
-    }),
-    negative: options => ({
-      ...options,
-      lessThan: Math.min((options && options.lessThan) || 0, 0),
-    }),
+    nonZero: ([options = {}]) => [
+      {
+        ...options,
+        allowZero: false,
+      },
+    ],
+    nonNegative: ([options = {}]) => [
+      {
+        ...options,
+        greaterThanOrEqualTo: Math.max((options && options.greaterThanOrEqualTo) || 0, 0),
+      },
+    ],
+    positive: ([options = {}]) => [
+      {
+        ...options,
+        greaterThan: Math.max((options && options.greaterThan) || 0, 0),
+      },
+    ],
+    negative: ([options = {}]) => [
+      {
+        ...options,
+        lessThan: Math.min((options && options.lessThan) || 0, 0),
+      },
+    ],
   },
 }
 
@@ -45,7 +53,7 @@ function integerFactory(inputOptions) {
   if (allowZero === false) {
     middlewares.push((input, next, { saveFieldError }) => {
       if (input === 0) {
-        saveFieldError({ t: 'integer.failedNonZero' })
+        saveFieldError({ t: 'integer.zero' })
       }
 
       return next(input)

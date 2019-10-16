@@ -1,11 +1,16 @@
 const { Dto } = require('../dest/index')
 
-describe('DTO with object property', () => {
+describe('DTO object field', () => {
   const dto = new Dto({
     item: Dto.object({
       id: Dto.positive.integer,
       name: Dto.optional.string,
     }),
+  })
+
+  test('requires parameter', () => {
+    const makeDto = () => new Dto({ failing: Dto.object })
+    expect(makeDto).toThrow(Error)
   })
 
   test('reads an object', () => {

@@ -8,6 +8,11 @@ describe('DTO with array property', () => {
     }),
   })
 
+  test('requires parameter', () => {
+    const makeDto = () => new Dto({ failing: Dto.array })
+    expect(makeDto).toThrow(Error)
+  })
+
   test('reads an array', () => {
     const item = dto.read({ items: [{ id: 1 }, { id: 2 }, { id: 3, name: 'wozo', age: 13 }] })
     expect(item).toEqual({ items: [{ id: 1 }, { id: 2 }, { id: 3, name: 'wozo' }] })
@@ -65,6 +70,16 @@ describe('DTO with array property', () => {
       expect(error.fieldErrors['[0].items[0].id']).toBeTruthy()
       expect(error.fieldErrors['[1].items[0].name']).toBeTruthy()
       expect(error.fieldErrors['[1].items[1].id']).toBeTruthy()
+    }
+  })
+
+  test('supports rejecting blank arrays', () => {
+    try {
+      const dto = new Dto({ items: Dto.nonblank.array({ id: Dto.integer }) })
+      dto.read({ items: [] })
+      fail()
+    } catch (error) {
+      expect(error.fieldErrors.items[0]).toHaveProperty('t', 'array.blank')
     }
   })
 })

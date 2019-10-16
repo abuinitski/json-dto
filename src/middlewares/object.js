@@ -6,10 +6,13 @@ export default {
     factory: dtoDescription => objectFactory(dtoDescription, 'readHandler'),
     stage: ProcessingStages.Map,
   },
+
   write: {
     factory: dtoDescription => objectFactory(dtoDescription, 'writeHandler'),
     stage: ProcessingStages.Map,
   },
+
+  requireParameter: true,
 }
 
 function objectFactory(dtoDescription, handlerName) {

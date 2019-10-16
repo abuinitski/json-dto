@@ -12,8 +12,8 @@ class VerbRegistry {
     }
   }
 
-  registerMiddleware(name, { read, write, sugars }) {
-    const middleware = new MiddlewareVerb(name, { read, write })
+  registerMiddleware(name, { sugars, ...middlewareConfig }) {
+    const middleware = new MiddlewareVerb(name, middlewareConfig)
 
     if (this.#middlewares.has(middleware.name) || this.#sugars.has(middleware.name)) {
       throw new Error(`Dto.registerMiddleware: name "${middleware.name}" is already taken`)

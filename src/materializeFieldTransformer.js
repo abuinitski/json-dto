@@ -43,12 +43,14 @@ function explodeStagedHandlers(middlewares) {
   const writes = []
 
   for (const { middleware, params } of middlewares) {
+    middleware.validateParams(...params)
+
     if (middleware.read) {
-      pushHandler(reads, middleware.read.factory(params), middleware.read.stage)
+      pushHandler(reads, middleware.read.factory(...params), middleware.read.stage)
     }
 
     if (middleware.write) {
-      pushHandler(writes, middleware.write.factory(params), middleware.write.stage)
+      pushHandler(writes, middleware.write.factory(...params), middleware.write.stage)
     }
   }
 
@@ -93,6 +95,9 @@ function cookVerbsToMiddlewaresWithSugarsApplied(verbs) {
       const middleware = middlewares.get(sugar.parentMiddleware.name)
 
       middleware.params = sugar.sugarHandler(middleware.params, sugarParams)
+      if (!Array.isArray(middleware.params)) {
+        throw new Error(`invalid sugar implementation for ${sugar.name}: should return an array of arguments`)
+      }
     }, new Map())
 
   return middlewares.values()

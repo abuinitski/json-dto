@@ -13,7 +13,7 @@ export default function FieldBuilder(firstVerbName) {
       middleware: firstVerbs.middleware,
       sugars: firstVerbs.sugars,
       verbName: firstVerbName,
-      verbParams: null,
+      verbParams: [],
     },
   ]
 
@@ -22,9 +22,8 @@ export default function FieldBuilder(firstVerbName) {
   return new Proxy(proxyTarget, {
     apply(target, thisArg, argArray) {
       const [lastVerbData] = builderVerbData.splice(-1)
-      const [nextVerbParams] = argArray
 
-      applyVerb(lastVerbData.verbName, nextVerbParams)
+      applyVerb(lastVerbData.verbName, argArray)
 
       return new Proxy(proxyTarget, this)
     },
@@ -34,7 +33,7 @@ export default function FieldBuilder(firstVerbName) {
         return fieldName => materializeFieldTransformer(fieldName, builderVerbData)
       }
 
-      applyVerb(propertyName, null)
+      applyVerb(propertyName, [])
 
       return new Proxy(proxyTarget, this)
     },

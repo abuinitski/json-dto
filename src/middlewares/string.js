@@ -5,18 +5,43 @@ export default {
     factory: stringFactory,
     stage: ProcessingStages.Map,
   },
+
   write: {
     factory: stringFactory,
     stage: ProcessingStages.Map,
   },
+
+  sugars: {
+    nonblank: ([options = {}]) => [
+      {
+        ...options,
+        allowBlank: false,
+      },
+    ],
+  },
 }
 
-function stringFactory() {
-  return (input, next) => {
-    if (typeof input === 'string') {
-      return next(input)
-    }
+function stringFactory(options = {}) {
+  const { allowBlank = true } = options
 
-    return next(input, { t: 'string.invalid' })
+  const middlewares = [
+    (input, next) => {
+      if (typeof input === 'string') {
+        return next(input)
+      }
+
+      return next(input, { t: 'string.invalid' })
+    },
+  ]
+
+  if (allowBlank === false) {
+    middlewares.push((input, next) => {
+      if (!input.replace(/\s+/g, '')) {
+        return next(input, { t: 'string.blank' })
+      }
+      return next(input)
+    })
   }
+
+  return middlewares
 }
