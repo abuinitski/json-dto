@@ -2,13 +2,19 @@ import { DtoReadError, DtoWriteError } from './errors'
 import ObjectHandler from './ObjectHandler'
 
 export default class Dto {
+  #fields
   #readHandler
   #writeHandler
 
   constructor(fields) {
     const { readHandler, writeHandler } = ObjectHandler.materialize(fields)
+    this.#fields = fields
     this.#readHandler = readHandler
     this.#writeHandler = writeHandler
+  }
+
+  get fields() {
+    return this.#fields
   }
 
   read(input) {
