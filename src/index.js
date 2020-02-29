@@ -6,6 +6,7 @@ import ProcessingStages from './ProcessingStages'
 
 import optional from './middlewares/optional'
 import integer from './middlewares/integer'
+import decimal from './middlewares/decimal'
 import nullable from './middlewares/nullable'
 import string from './middlewares/string'
 import array from './middlewares/array'
@@ -14,6 +15,7 @@ import enumMiddleware from './middlewares/enum'
 
 VerbRegistry.registerMiddleware('optional', optional)
 VerbRegistry.registerMiddleware('integer', integer)
+VerbRegistry.registerMiddleware('decimal', decimal)
 VerbRegistry.registerMiddleware('string', string)
 VerbRegistry.registerMiddleware('array', array)
 VerbRegistry.registerMiddleware('object', object)
